@@ -1,5 +1,6 @@
 @chcp 65001 >nul
 @echo off
+setlocal enabledelayedexpansion
 echo ==========================================
 echo 正在部署学生抽选系统到GitHub...
 echo ==========================================
@@ -24,6 +25,9 @@ if %errorlevel% neq 0 (
         echo 使用默认邮箱: !user_email!
     )
     git config --global user.email "!user_email!"
+) else (
+    for /f "delims=" %%i in ('git config --global user.email') do set current_email=%%i
+    echo 当前Git邮箱: !current_email!
 )
 
 git config --global user.name >nul 2>&1
@@ -35,6 +39,9 @@ if %errorlevel% neq 0 (
         echo 使用默认用户名: !user_name!
     )
     git config --global user.name "!user_name!"
+) else (
+    for /f "delims=" %%i in ('git config --global user.name') do set current_name=%%i
+    echo 当前Git用户名: !current_name!
 )
 
 REM 检查是否已初始化Git仓库
@@ -91,6 +98,10 @@ if %errorlevel% neq 0 (
     echo 警告: 无法验证远程仓库地址。
 )
 
+REM 检查当前分支
+for /f "delims=" %%i in ('git branch --show-current') do set current_branch=%%i
+echo 当前分支: !current_branch!
+
 REM 推送到GitHub
 echo 推送到GitHub...
 git push -u origin main
@@ -98,12 +109,22 @@ if %errorlevel% neq 0 (
     echo 尝试推送到master分支...
     git push -u origin master
     if %errorlevel% neq 0 (
-        echo 尝试强制推送...
+        echo 尝试强制推送到main分支...
         git push -u origin main --force
         if %errorlevel% neq 0 (
-            echo 错误: 推送失败，请检查网络连接和仓库权限。
-            pause
-            exit /b
+            echo 尝试强制推送到master分支...
+            git push -u origin master --force
+            if %errorlevel% neq 0 (
+                echo 错误: 推送失败，请检查网络连接和仓库权限。
+                echo.
+                echo 请尝试以下解决方案:
+                echo 1. 确保您有该仓库的写入权限
+                echo 2. 检查网络连接是否正常
+                echo 3. 确认仓库URL是否正确: https://github.com/waynezyx007/student-picker-app.git
+                echo.
+                pause
+                exit /b
+            )
         )
     )
 )

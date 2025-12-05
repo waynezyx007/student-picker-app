@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>冰川流动过程</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #1a237e, #4a148c);
+      font-family: "Microsoft YaHei", sans-serif;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 500px;
+      height: 500px;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(to bottom, #87CEEB 0%, #B0E2FF 40%, #8fbc8f 100%);
+    }
+    
+    .title {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      font-size: 24px;
+      z-index: 10;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 5px;
+      border-radius: 5px;
+      margin: 0 20px;
+    }
+    
+    /* 山脉背景 */
+    .mountains {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60%;
+      background: #5d4037;
+    }
+    
+    .mountain {
+      position: absolute;
+      bottom: 0;
+    }
+    
+    .mountain-1 {
+      left: 0;
+      width: 30%;
+      height: 70%;
+      background: #4e342e;
+      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    }
+    
+    .mountain-2 {
+      left: 20%;
+      width: 25%;
+      height: 80%;
+      background: #3e2723;
+      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    }
+    
+    .mountain-3 {
+      right: 15%;
+      width: 20%;
+      height: 65%;
+      background: #6d4c41;
+      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    }
+    
+    /* 冰川主体 */
+    .glacier-container {
+      position: absolute;
+      bottom: 20%;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      overflow: hidden;
+    }
+    
+    .glacier {
+      position: absolute;
+      bottom: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(224, 247, 250, 0.95), rgba(176, 225, 230, 0.9));
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+      animation: glacierFlow 8s infinite linear;
+    }
+    
+    /* 冰川表面细节 */
+    .glacier-surface {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 20px;
+      background: rgba(230, 245, 250, 0.8);
+    }
+    
+    .ice-crack {
+      position: absolute;
+      background: rgba(200, 230, 240, 0.6);
+      border-radius: 3px;
+    }
+    
+    .crack1 {
+      top: 30%;
+      left: 15%;
+      width: 60px;
+      height: 8px;
+      transform: rotate(25deg);
+    }
+    
+    .crack2 {
+      top: 50%;
+      left: 40%;
+      width: 80px;
+      height: 6px;
+      transform: rotate(-15deg);
+    }
+    
+    .crack3 {
+      top: 65%;
+      left: 70%;
+      width: 50px;
+      height: 7px;
+      transform: rotate(40deg);
+    }
+    
+    .crack4 {
+      top: 40%;
+      left: 80%;
+      width: 40px;
+      height: 5px;
+      transform: rotate(-30deg);
+    }
+    
+    /* 冰川移动轨迹 */
+    .glacier-track {
+      position: absolute;
+      bottom: 20%;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: rgba(139, 195, 74, 0.3);
+      clip-path: polygon(0% 100%, 15% 70%, 30% 75%, 45% 70%, 60% 75%, 75% 70%, 90% 75%, 100% 70%, 100% 100%);
+    }
+    
+    /* 侵蚀效果 */
+    .erosion-effect {
+      position: absolute;
+      bottom: 20%;
+      width: 100%;
+      height: 40%;
+      clip-path: polygon(0% 100%, 15% 80%, 30% 82%, 45% 80%, 60% 82%, 75% 80%, 90% 82%, 100% 80%, 100% 100%);
+      background: rgba(224, 247, 250, 0.4);
+      opacity: 0;
+      animation: erosionShow 8s infinite;
+    }
+    
+    /* 粒雪盆 */
+    .snow-field {
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 30%;
+      height: 30%;
+      background: linear-gradient(to bottom, white, rgba(240, 248, 255, 0.9));
+      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+      opacity: 0.9;
+    }
+    
+    .snow-fall {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      width: 30%;
+      height: 20%;
+    }
+    
+    .snowflake {
+      position: absolute;
+      color: white;
+      font-size: 20px;
+      animation: snowFall 4s linear infinite;
+    }
+    
+    /* 箭头指示冰川流向 */
+    .flow-arrow {
+      position: absolute;
+      bottom: 35%;
+      left: 20%;
+      color: white;
+      font-size: 30px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      animation: pulse 1.5s infinite;
+    }
+    
+    .flow-label {
+      position: absolute;
+      bottom: 30%;
+      left: 30%;
+      color: white;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    
+    /* 动画定义 */
+    @keyframes glacierFlow {
+      0% { 
+        left: -100%; 
+      }
+      100% { 
+        left: 0%; 
+      }
+    }
+    
+    @keyframes erosionShow {
+      0% {
+        opacity: 0;
+      }
+      30% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.7;
+      }
+      70% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    
+    @keyframes snowFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(10px);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+    
+    /* 控制面板 */
+    .controls {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+      padding: 5px;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">冰川流动过程</div>
+    
+    <!-- 山脉背景 -->
+    <div class="mountains">
+      <div class="mountain mountain-1"></div>
+      <div class="mountain mountain-2"></div>
+      <div class="mountain mountain-3"></div>
+    </div>
+    
+    <!-- 粒雪盆 -->
+    <div class="snow-field"></div>
+    <div class="snow-fall">
+      <div class="snowflake">❄</div>
+      <div class="snowflake" style="left: 20%; animation-delay: 0.5s;">❄</div>
+      <div class="snowflake" style="left: 40%; animation-delay: 1s;">❄</div>
+      <div class="snowflake" style="left: 60%; animation-delay: 1.5s;">❄</div>
+      <div class="snowflake" style="left: 80%; animation-delay: 2s;">❄</div>
+    </div>
+    
+    <!-- 冰川移动轨迹 -->
+    <div class="glacier-track"></div>
+    
+    <!-- 冰川侵蚀效果 -->
+    <div class="erosion-effect"></div>
+    
+    <!-- 冰川主体 -->
+    <div class="glacier-container">
+      <div class="glacier">
+        <div class="glacier-surface"></div>
+        <div class="ice-crack crack1"></div>
+        <div class="ice-crack crack2"></div>
+        <div class="ice-crack crack3"></div>
+        <div class="ice-crack crack4"></div>
+      </div>
+    </div>
+    
+    <!-- 流向指示 -->
+    <div class="flow-arrow">→</div>
+    <div class="flow-label">冰川流动方向</div>
+    
+    <div class="controls">冰川通过自身重量产生塑性变形和底部滑动而移动</div>
+  </div>
+
+  <script>
+    // 添加更多雪花
+    document.addEventListener('DOMContentLoaded', function() {
+      const snowFall = document.querySelector('.snow-fall');
+      for (let i = 0; i < 15; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.innerHTML = '❄';
+        snowflake.style.left = Math.random() * 30 + '%';
+        snowflake.style.animationDelay = Math.random() * 4 + 's';
+        snowflake.style.fontSize = (Math.random() * 10 + 15) + 'px';
+        snowFall.appendChild(snowflake);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "student-picker-app",
+  "main": "worker.js",
+  "compatibility_date": "2023-05-15",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "STUDENT_DATA",
+      "id": "YOUR_KV_NAMESPACE_ID"
+    }
+  ]
+}

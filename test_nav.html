@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航测试</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af', // 教育蓝
+                        secondary: '#f5f5dc', // 柔和米色
+                        accent: '#f97316', // 活力橙
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .nav-link {
+                @apply flex items-center px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-all-300 cursor-pointer;
+            }
+            .nav-link.active {
+                @apply bg-primary/10 text-primary font-medium;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边导航栏 -->
+        <aside class="w-64 bg-white shadow-md">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-primary flex items-center">
+                    <i class="fa fa-graduation-cap mr-2"></i>
+                    导航测试
+                </h1>
+            </div>
+            <nav class="mt-6 px-2">
+                <div class="nav-link active mb-1" data-page="page1">
+                    <i class="fa fa-dashboard w-5 h-5 mr-3"></i>
+                    <span>页面1</span>
+                </div>
+                <div class="nav-link mb-1" data-page="page2">
+                    <i class="fa fa-plus-circle w-5 h-5 mr-3"></i>
+                    <span>页面2</span>
+                </div>
+                <div class="nav-link mb-1" data-page="page3">
+                    <i class="fa fa-list-alt w-5 h-5 mr-3"></i>
+                    <span>页面3</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 overflow-y-auto bg-gray-50">
+            <!-- 顶部栏 -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <h2 id="pageTitle" class="text-lg font-medium text-gray-900">页面1</h2>
+                </div>
+            </header>
+
+            <!-- 页面内容 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- 页面1 -->
+                <div id="page1-page" class="page-content">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">页面1内容</h3>
+                        <p>这是页面1的内容。</p>
+                        <button id="testBtn" class="mt-4 px-4 py-2 bg-primary text-white rounded-md">测试按钮</button>
+                    </div>
+                </div>
+
+                <!-- 页面2 -->
+                <div id="page2-page" class="page-content hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">页面2内容</h3>
+                        <p>这是页面2的内容。</p>
+                    </div>
+                </div>
+
+                <!-- 页面3 -->
+                <div id="page3-page" class="page-content hidden">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">页面3内容</h3>
+                        <p>这是页面3的内容。</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM 加载完成');
+            
+            // 导航链接点击事件
+            const navLinks = document.querySelectorAll('.nav-link');
+            console.log('找到导航链接数量:', navLinks.length);
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    console.log('导航链接被点击:', this.getAttribute('data-page'));
+                    
+                    const pageId = this.getAttribute('data-page');
+                    showPage(pageId);
+                    
+                    // 更新导航链接状态
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 更新页面标题
+                    document.getElementById('pageTitle').textContent = this.querySelector('span').textContent;
+                });
+            });
+            
+            // 测试按钮点击事件
+            document.getElementById('testBtn').addEventListener('click', function() {
+                console.log('测试按钮被点击');
+                alert('测试按钮被点击！');
+            });
+        });
+        
+        // 显示指定页面
+        function showPage(pageId) {
+            console.log('显示页面:', pageId);
+            
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            const targetPage = document.getElementById(`${pageId}-page`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                console.log('成功显示页面:', pageId);
+            } else {
+                console.error('找不到页面元素:', `${pageId}-page`);
+            }
+        }
+    </script>
+</body>
+</html>

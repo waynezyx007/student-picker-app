@@ -12,7 +12,7 @@ export default {
     if (url.pathname.startsWith('/api/')) {
       return handleApiRequest(request, env, url);
     }
-    
+    就是
     // Serve static files for all other routes
     return env.ASSETS.fetch(request);
   }

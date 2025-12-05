@@ -101,9 +101,9 @@ jobs:
 
 **截图说明：**
 - 位置：页面左侧导航栏 → 「账户主页」→ 「概述」
-- 外观：一个 32 字符的字符串，格式类似 `0123456789abcdef0123456789abcdef`
+- 外观：一个 32 字符的字符串，格式类似 17b8b89bc46c8e30beba335c1070775c
 
-### 2. 创建 Cloudflare API Token
+### 2. 创建 Cloudflare API Token    fjzXHqbY2PcueswcX-hEWfz7tpD4OMExYTb3U7fF
 
 **步骤：**
 
@@ -125,7 +125,7 @@ jobs:
 
 **截图说明：**
 - 模板选择：在「创建 API 令牌」页面，找到「编辑 Cloudflare Workers」模板
-- 令牌格式：一个长字符串，格式类似 `abc_def_1234567890abcdef1234567890abcdef1234567890`
+- 令牌格式：一个长字符串，格式类似 fjzXHqbY2PcueswcX-hEWfz7tpD4OMExYTb3U7fF
 
 ## 四、配置 GitHub Secrets
 

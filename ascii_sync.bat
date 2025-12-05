@@ -4,7 +4,7 @@ rem Simple GitHub sync script
 rem This script uses only ASCII characters to avoid encoding issues
 
 set GITHUB_REPO=https://github.com/waynezyx007/student-picker-app.git
-set BRANCH=master
+set BRANCH=main
 
 echo Student Picker - GitHub Sync Tool
 echo --------------------------------

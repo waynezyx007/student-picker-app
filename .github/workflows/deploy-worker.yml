@@ -1,0 +1,39 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches:
+      - master  # 或者 main，根据你的默认分支
+    paths:
+      - 'worker.js'  # 监听 Worker 核心文件变化
+      - 'wrangler.json'  # 监听配置文件变化
+      - '.github/workflows/deploy-worker.yml'  # 监听自身变化
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Workers
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Publish to Cloudflare Workers
+        run: wrangler publish
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

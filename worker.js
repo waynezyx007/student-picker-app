@@ -12,9 +12,13 @@ export default {
     if (url.pathname.startsWith('/api/')) {
       return handleApiRequest(request, env, url);
     }
-    就是
-    // Serve static files for all other routes
-    return env.ASSETS.fetch(request);
+    // Serve static HTML file for all other routes
+    if (env.STUDENT_PICKER_HTML) {
+      return new Response(env.STUDENT_PICKER_HTML, {
+        headers: { 'Content-Type': 'text/html' }
+      });
+    }
+    return new Response('HTML file not found', { status: 404 });
   }
 };
 

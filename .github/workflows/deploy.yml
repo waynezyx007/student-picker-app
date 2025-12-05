@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Workers
 
 on:
   push:
@@ -8,10 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
-    name: Deploy to Cloudflare Pages
+    name: Deploy to Cloudflare Workers
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,21 +24,14 @@ jobs:
           npm ci
         continue-on-error: true
 
-      - name: Check if wrangler is installed
-        run: |
-          npm list -g wrangler || echo "Wrangler not found globally"
-        continue-on-error: true
-
-      - name: Install Wrangler globally
+      - name: Install Wrangler
         run: |
           npm install -g wrangler
         continue-on-error: true
 
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: student-picker-app
-          directory: .
-          wranglerVersion: '3'
+      - name: Deploy to Cloudflare Workers
+        run: |
+          npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

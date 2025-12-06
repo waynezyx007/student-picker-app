@@ -3,7 +3,7 @@ name: Deploy to Cloudflare Workers
 on:
   push:
     branches:
-      - master  # 或者 main，根据你的默认分支
+      - main  # 或者 main，根据你的默认分支
     paths:
       - 'worker.js'  # 监听 Worker 核心文件变化
       - 'wrangler.json'  # 监听配置文件变化

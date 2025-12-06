@@ -2,12 +2,7 @@
   "name": "student-picker-app",
   "main": "worker.js",
   "compatibility_date": "2023-05-15",
-  "assets": [
-    {
-      "name": "student_picker.html",
-      "binding": "STUDENT_PICKER_HTML"
-    }
-  ],
+
   "kv_namespaces": [
     {
       "binding": "STUDENT_DATA",

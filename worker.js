@@ -13,12 +13,120 @@ export default {
       return handleApiRequest(request, env, url);
     }
     // Serve static HTML file for all other routes
-    if (env.STUDENT_PICKER_HTML) {
-      return new Response(env.STUDENT_PICKER_HTML, {
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生选择器应用</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #app {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #student-info {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>学生选择器应用</h1>
+    <div id="app">
+        <button id="random-student">随机选择学生</button>
+        <button id="save-student">保存学生数据</button>
+        <div id="student-info">
+            <h3>学生信息</h3>
+            <p id="student-name">等待选择...</p>
+        </div>
+    </div>
+
+    <script>
+        // 简单的学生选择器应用
+        const randomStudentBtn = document.getElementById('random-student');
+        const saveStudentBtn = document.getElementById('save-student');
+        const studentNameEl = document.getElementById('student-name');
+
+        // 模拟学生数据
+        let students = [];
+
+        // 从API获取学生数据
+        async function fetchStudents() {
+            try {
+                const response = await fetch('/api/students');
+                students = await response.json();
+                console.log('学生数据:', students);
+            } catch (error) {
+                console.error('获取学生数据失败:', error);
+            }
+        }
+
+        // 随机选择学生
+        randomStudentBtn.addEventListener('click', async () => {
+            if (students.length === 0) {
+                await fetchStudents();
+            }
+            if (students.length > 0) {
+                const randomIndex = Math.floor(Math.random() * students.length);
+                const selectedStudent = students[randomIndex];
+                studentNameEl.textContent = selectedStudent.name + ' (' + selectedStudent.id + ')';
+            } else {
+                studentNameEl.textContent = '没有学生数据';
+            }
+        });
+
+        // 保存学生数据
+        saveStudentBtn.addEventListener('click', async () => {
+            const newStudent = {
+                id: Date.now().toString(),
+                name: prompt('请输入学生姓名:'),
+                class: prompt('请输入学生班级:')
+            };
+            if (newStudent.name && newStudent.class) {
+                try {
+                    await fetch('/api/students', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newStudent)
+                    });
+                    alert('学生数据保存成功');
+                    await fetchStudents(); // 重新获取数据
+                } catch (error) {
+                    console.error('保存学生数据失败:', error);
+                    alert('保存失败');
+                }
+            }
+        });
+
+        // 初始化获取学生数据
+        fetchStudents();
+    </script>
+</body>
+</html>
+    `;
+    return new Response(htmlContent, {
         headers: { 'Content-Type': 'text/html' }
-      });
-    }
-    return new Response('HTML file not found', { status: 404 });
+    });
   }
 };
 
